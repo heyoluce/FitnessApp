@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CodeBlogFitness.BL.Model
 {
-	internal class User
+	[Serializable]
+	public class User
 	{
 		public User(string name,
 					Gender gender,
@@ -29,18 +30,42 @@ namespace CodeBlogFitness.BL.Model
 			#endregion
 		}
 
+		public User(string name)
+		{
+			if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("Имя не может быть пустым", nameof(name));
+			Name = name;
+		}
+
 		public string Name { get; }
 
-		public Gender Gender { get; }
+		public Gender Gender { get; set; }
 
-		public DateTime BirthDate { get; }
+		public DateTime BirthDate { get; set; }
 
 		public double Weight { get; set; }
 
 		public double Height { get; set; }
+
+		public int Age
+		{
+			get
+			{
+				// Рассчитываем возраст на основе разницы между текущей датой и датой рождения.
+				DateTime currentDate = DateTime.Now;
+				int age = currentDate.Year - BirthDate.Year;
+
+				// Уменьшаем возраст, если день рождения еще не наступил в текущем году.
+				if (currentDate < BirthDate.AddYears(age))
+				{
+					age--;
+				}
+
+				return age;
+			}
+		}
 		public override string ToString()
 		{
-			return base.ToString();
+			return Name + " (" + Age + ")";
 		}
 	}
 }

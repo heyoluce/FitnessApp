@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace CodeBlogFitness.BL.Model
 {
-	internal class Gender
+	[Serializable]
+	public class Gender
 	{
 		public string Name { get; }
 
