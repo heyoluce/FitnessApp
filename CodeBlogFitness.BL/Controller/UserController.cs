@@ -11,8 +11,9 @@ using System.Threading.Tasks;
 /// Контроллер пользователя
 namespace CodeBlogFitness.BL.Controller
 {
-	public class UserController
+	public class UserController : ControllerBase
 	{
+		private const string USERS_FILE_NAME = "users.dat";
 		public List<User> Users { get; }
 		public User CurrentUser { get;  }
 		public bool IsNewUser { get; } = false;
@@ -39,11 +40,8 @@ namespace CodeBlogFitness.BL.Controller
 		/// </summary>
 		public void Save()
 		{
-			var formatter = new BinaryFormatter();
-			using(var fs =new FileStream("user.dat", FileMode.OpenOrCreate))
-			{
-				formatter.Serialize(fs, Users);
-			}
+			Save<User>(USERS_FILE_NAME, Users);
+
 		}
 		/// <summary>
 		/// Получение cписок данных пользователей
@@ -51,19 +49,8 @@ namespace CodeBlogFitness.BL.Controller
 		/// <returns></returns>
 		private List<User> GetUsersData()
 		{
-			var formatter = new BinaryFormatter();
-			using (var fs = new FileStream("user.dat", FileMode.OpenOrCreate))
-			{ 
-				if (fs.Length>0 && formatter.Deserialize(fs) is List<User> users)
-				{
-					return users;
-				}
-				// TODO: Что делать если пользователя не прочитали
-				else
-				{
-					return new List<User>();
-				}
-			}
+			return Load<List<User>>(USERS_FILE_NAME) ?? new List<User>();
+			
 		}
 		public void SetNewUserData(string genderName, DateTime birthDate, double weight=1, double height=1)
 		{

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using CodeBlogFitness.BL.Controller;
+using CodeBlogFitness.BL.Model;
 namespace CodeBlogFitness.CMD
 {
 	public class Program
@@ -17,6 +18,7 @@ namespace CodeBlogFitness.CMD
 			Console.WriteLine("Введите имя пользователя: ");
 			string name = Console.ReadLine();
 			var userController = new UserController(name);
+			var eatingController = new EatingController(userController.CurrentUser);
 			if (userController.IsNewUser)
 			{
 				Console.WriteLine("Введите пол: ");
@@ -31,9 +33,37 @@ namespace CodeBlogFitness.CMD
 				userController.SetNewUserData(gender, birthDate, weight, height);
 			}
 			Console.WriteLine(userController.CurrentUser);
-			Console.ReadLine();
+
+            Console.WriteLine("Что вы хотите сделать?: ");
+            Console.WriteLine("Е - ввести прием пищи");
+			var key = Console.ReadKey();
+            Console.WriteLine();
+            if (key.Key == ConsoleKey.E)
+			{
+				var foods = EnterEating();
+				eatingController.Add(foods.Food, foods.Weight);
+
+                foreach(var item in eatingController.Eating.Foods)
+				{
+                    Console.WriteLine($"\t{item.Key} - {item.Value}");
+                }
+            }
 
 		}
+			private static (Food Food, double Weight) EnterEating()
+		{
+			Console.WriteLine("Введите имя продукта: ");
+			var foodName = Console.ReadLine();
+
+			var callories = GetDoubleInput("калорийность");
+			var prots = GetDoubleInput("белки");
+			var carbs= GetDoubleInput("углеводы");
+			var fats= GetDoubleInput("жиры");
+
+			var weight = GetDoubleInput("вес");
+			var product = new Food(foodName, callories, prots, fats, carbs);
+			return (product, weight); 
+        }
 			private static DateTime GetBirthDate()
 			{
 				do

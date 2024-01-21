@@ -17,13 +17,12 @@ namespace CodeBlogFitness.BL.Model
 		{
 			#region Проверка условий и присваивание
 			if (string.IsNullOrEmpty(name)) throw new ArgumentNullException("Имя не может быть пустым", nameof(name));
-			if (gender == null) throw new ArgumentNullException("Пол не может быть пустым", nameof(gender));
 			if (birthDate < DateTime.Parse("01.01.1900") || birthDate>= DateTime.Now) throw new ArgumentException("Неверный ввод даты рождения", nameof(birthDate));
 			if (weight< 0.0) throw new ArgumentException("Вес не может быть меньше нуля", nameof(weight));
 			if (height< 0.0) throw new ArgumentException("Рост не может быть меньше нуля", nameof(height));
 			
 			Name = name;
-			Gender = gender;
+			Gender = gender ?? throw new ArgumentNullException("Пол не может быть пустым", nameof(gender));
 			BirthDate = birthDate;
 			Weight = weight;
 			Height = height;
