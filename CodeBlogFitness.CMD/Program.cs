@@ -6,16 +6,19 @@ using System.Text;
 using System.Threading.Tasks;
 using CodeBlogFitness.BL.Controller;
 using CodeBlogFitness.BL.Model;
+using System.Globalization;
+using System.Resources;
 namespace CodeBlogFitness.CMD
 {
 	public class Program
 	{
 		static void Main(string[] args)
 		{
+			var culture = CultureInfo.CreateSpecificCulture("en-US");
+			var resourceManager = new ResourceManager("CodeBlogFitness.CMD.Languages.Messages", typeof(Program).Assembly);
+            Console.WriteLine(resourceManager.GetString("Hello", culture));
 
-			Console.WriteLine("Вас приветствует фитнес - приложение");
-
-			Console.WriteLine("Введите имя пользователя: ");
+			Console.WriteLine(resourceManager.GetString("EnterName", culture));
 			string name = Console.ReadLine();
 			var userController = new UserController(name);
 			var eatingController = new EatingController(userController.CurrentUser);
