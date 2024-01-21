@@ -52,7 +52,7 @@ namespace CodeBlogFitness.BL.Controller
 
 		private void Save()
 		{
-			Save<Food>(FOODS_FILE_NAME, Foods);
+			Save<List<Food>>(FOODS_FILE_NAME, Foods);
 			Save<Eating>(EATINGS_FILE_NAME, Eating);
 		}
 

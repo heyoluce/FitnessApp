@@ -14,7 +14,7 @@ namespace CodeBlogFitness.CMD
 	{
 		static void Main(string[] args)
 		{
-			var culture = CultureInfo.CreateSpecificCulture("en-US");
+			var culture = CultureInfo.CreateSpecificCulture("ru-RU");
 			var resourceManager = new ResourceManager("CodeBlogFitness.CMD.Languages.Messages", typeof(Program).Assembly);
             Console.WriteLine(resourceManager.GetString("Hello", culture));
 
@@ -22,61 +22,96 @@ namespace CodeBlogFitness.CMD
 			string name = Console.ReadLine();
 			var userController = new UserController(name);
 			var eatingController = new EatingController(userController.CurrentUser);
+			var exerciseController = new ExerciseController(userController.CurrentUser);
 			if (userController.IsNewUser)
 			{
 				Console.WriteLine("Введите пол: ");
 				string gender = Console.ReadLine();
 
-				DateTime birthDate = GetBirthDate();
+				DateTime birthDate = ParseDateTime("дата рождения");
 
-				var weight = GetDoubleInput("вес");
+				var weight = ParseDouble("вес");
 
-				var height = GetDoubleInput("рост");
+				var height = ParseDouble("рост");
 
 				userController.SetNewUserData(gender, birthDate, weight, height);
 			}
 			Console.WriteLine(userController.CurrentUser);
 
-            Console.WriteLine("Что вы хотите сделать?: ");
-            Console.WriteLine("Е - ввести прием пищи");
-			var key = Console.ReadKey();
-            Console.WriteLine();
-            if (key.Key == ConsoleKey.E)
+			while (true)
 			{
-				var foods = EnterEating();
-				eatingController.Add(foods.Food, foods.Weight);
+				Console.WriteLine("Что вы хотите сделать?: ");
+				Console.WriteLine("Е - ввести прием пищи");
+				Console.WriteLine("A - ввести упражение");
+				Console.WriteLine("Q - выход");
+				var key = Console.ReadKey();
+				Console.WriteLine();
 
-                foreach(var item in eatingController.Eating.Foods)
+				switch (key.Key)
 				{
-                    Console.WriteLine($"\t{item.Key} - {item.Value}");
-                }
-            }
+					case ConsoleKey.E:
+						var foods = EnterEating();
+						eatingController.Add(foods.Food, foods.Weight);
 
+						foreach (var item in eatingController.Eating.Foods)
+						{
+							Console.WriteLine($"\t{item.Key} - {item.Value}");
+						}
+						break;
+					case ConsoleKey.A:
+						var exe = EnterExercise();
+						exerciseController.Add(exe.Acvtivity, exe.Start, exe.End);
+
+						foreach(var item in exerciseController.Exercises)
+
+						{
+							Console.WriteLine($"{item.Activity} c {item.Start.ToShortTimeString()} по {item.End.ToShortTimeString()}");
+                        }
+						break;
+					case ConsoleKey.Q:
+						Environment.Exit(0);
+						break;
+
+				}
+			}
+
+		}
+			private static (DateTime Start, DateTime End, Activity Acvtivity) EnterExercise()
+		{
+			Console.WriteLine("Введите название упражнения:");
+			var name = Console.ReadLine();
+
+			var energy = ParseDouble("расход энергии в минуту");
+			var start = ParseDateTime("начало упражнения");
+			var end = ParseDateTime("конец упражнения");
+
+			var activity = new Activity(name, energy);
+			return (start, end, activity);
 		}
 			private static (Food Food, double Weight) EnterEating()
 		{
 			Console.WriteLine("Введите имя продукта: ");
 			var foodName = Console.ReadLine();
 
-			var callories = GetDoubleInput("калорийность");
-			var prots = GetDoubleInput("белки");
-			var carbs= GetDoubleInput("углеводы");
-			var fats= GetDoubleInput("жиры");
+			var callories = ParseDouble("калорийность");
+			var prots = ParseDouble("белки");
+			var carbs= ParseDouble("углеводы");
+			var fats= ParseDouble("жиры");
 
-			var weight = GetDoubleInput("вес");
+			var weight = ParseDouble("вес");
 			var product = new Food(foodName, callories, prots, fats, carbs);
 			return (product, weight); 
         }
-			private static DateTime GetBirthDate()
+			private static DateTime ParseDateTime(string value)
 			{
 				do
 				{
-					Console.WriteLine("Введите дату рождения в формате (дд.мм.гггг):");
+					Console.WriteLine($"Введите {value} в формате (дд.мм.гггг):");
 					string input = Console.ReadLine();
 
-					if (DateTime.TryParseExact(input, "dd.MM.yyyy", null, System.Globalization.DateTimeStyles.None, out DateTime birthDate))
-					{
-						return birthDate;
+				if (DateTime.TryParseExact(input, "dd.MM.yyyy HH:mm", null, System.Globalization.DateTimeStyles.None, out DateTime birthDate))
+				{
+					return birthDate;
 					}
 					else
 					{
@@ -86,7 +121,7 @@ namespace CodeBlogFitness.CMD
 				} while (true);
 			}
 
-			private static double GetDoubleInput(string prompt)
+			private static double ParseDouble(string prompt)
 			{
 				Console.WriteLine($"Введите {prompt} :");
             do
