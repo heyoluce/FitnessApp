@@ -8,6 +8,7 @@ namespace CodeBlogFitness.BL.Model
 {
 	[Serializable]
 	public class User
+
 	{
 		public User(string name,
 					Gender gender,
@@ -35,9 +36,18 @@ namespace CodeBlogFitness.BL.Model
 			Name = name;
 		}
 
-		public string Name { get; }
+		public User()
+		{
+		}
 
-		public Gender Gender { get; set; }
+		public int Id { get; set; }
+
+		public string Name { get; set;  }
+
+		public int? GenderId { get; set; }
+		public virtual Gender Gender { get; set; }
+		public virtual ICollection<Eating> Eatings { get; set; }
+		public virtual ICollection<Exercise> Exercises { get; set; }
 
 		public DateTime BirthDate { get; set; }
 
@@ -66,5 +76,6 @@ namespace CodeBlogFitness.BL.Model
 		{
 			return Name + " (" + Age + ")";
 		}
+
 	}
 }

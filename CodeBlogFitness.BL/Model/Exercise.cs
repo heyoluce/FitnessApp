@@ -9,11 +9,13 @@ namespace CodeBlogFitness.BL.Model
 	[Serializable]
 	public class Exercise
 	{
-		public DateTime Start {  get;  }
-		public DateTime End { get;  }
+		public int Id { get; set; }
+		public DateTime Start { get; set; }
+		public DateTime End { get; set; }
 
-		public Activity Activity { get;  }
-		public User User { get; }
+		public virtual Activity Activity { get;  }
+		public virtual User User { get; set; }
+		public int UserId { get; set; }
 
 		public Exercise (DateTime start, DateTime end, Activity activity, User user)
 		{
@@ -22,6 +24,10 @@ namespace CodeBlogFitness.BL.Model
 			End = end;
 			Activity = activity;
 			User = user;
+		}
+
+		public Exercise()
+		{
 		}
 	}
 }

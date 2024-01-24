@@ -11,30 +11,16 @@ namespace CodeBlogFitness.BL.Controller
 {
 	public abstract class ControllerBase
 	{
-		protected void Save<T>(string fileName, object savedItem)
+		private readonly IDataSaver manager= new DataSaver();
+		protected void Save<T>(List<T> item) where T : class 
 		{
-			var formatter = new BinaryFormatter();
-			using (var fs = new FileStream(fileName, FileMode.OpenOrCreate))
-			{
-				
-				formatter.Serialize(fs, savedItem);
-			}
+			manager.Save(item);
 		}
-		protected T Load<T>(string fileName)
+		protected List<T> Load<T>() where T: class 
 		{
-			var formatter = new BinaryFormatter();
-			using (var fs = new FileStream(fileName, FileMode.OpenOrCreate))
-			{
-				if (fs.Length > 0 && formatter.Deserialize(fs) is T items)
-				{ 
-					return items;
-				}
+			return manager.Load<T>();
+		}
 
-				else
-				{
-					return default;
-				}
-			}
-		}
+		
 	}
 }
